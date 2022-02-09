@@ -27,6 +27,9 @@ public class HomeController {
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String getIndexPage(Model model, Page page) {
+        // 请求url为 /community/index?current=页码，其中?后的参数自动传入本方法的形参page中，自动通过page.setCurrent()进行了配置
+
+        // 分页设置
         page.setRows(discussPostService.findDiscussPostRows(0));
         page.setPath("/index");
 
