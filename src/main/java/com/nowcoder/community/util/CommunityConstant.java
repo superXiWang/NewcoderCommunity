@@ -12,4 +12,9 @@ public interface CommunityConstant {
     // 是否勾选“记住我”，登录凭证的失效时间
     int NORMAL_EXPIRED_SECOND=60*10;
     int LONG_EXPIRED_SECOND=60*60*24*7;
+
+    // 评论针对的实体类型常量
+    int ENTITY_TYPE_DISCUSSPOST = 1;    // 帖子
+    int ENTITY_TYPE_COMMENT = 2;    // 评论
+
 }
