@@ -30,4 +30,7 @@ public interface DiscussPostMapper {
      * @return
      */
     DiscussPost findDiscussPost(int id);
+
+    // 更新总评论数
+    int updateCommentsCountById(int id, int commentCount);
 }
