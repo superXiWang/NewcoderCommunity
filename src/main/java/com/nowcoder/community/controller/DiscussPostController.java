@@ -71,7 +71,7 @@ public class DiscussPostController implements CommunityConstant {
         page.setPath("/discuss/detail/"+discussPostId);
 
         // 查询该贴下的所有评论并添加到model
-        List<Comment> commentsList = commentService.getCommentsListByEntity(ENTITY_TYPE_DISCUSSPOST, discussPostId, 0, 5);
+        List<Comment> commentsList = commentService.getCommentsListByEntity(ENTITY_TYPE_DISCUSSPOST, discussPostId, page.getOffset(), page.getLimit());
         // 由于 comment 中的 userId 在实际使用中并不方便，将user查到后封装到 Map中；
         // 除此之外将针对该 comment 的其他 reply(本质仍然是comment) 封装在列表中装进 Map里。
         List<Map<String, Object>> commentsViewObjectList = new ArrayList<>();
@@ -93,9 +93,9 @@ public class DiscussPostController implements CommunityConstant {
                         // 添加回复内容
                         replyViewObject.put("reply", eachReply);
                         // 添加回复作者
-                        replyViewObject.put("author", userService.findUserById(eachComment.getUserId()));
+                        replyViewObject.put("author", userService.findUserById(eachReply.getUserId()));
                         // 添加目标用户
-                        User targetUser = eachComment.getTargetId()==0 ? null : userService.findUserById(eachComment.getTargetId());
+                        User targetUser = eachReply.getTargetId()==0 ? null : userService.findUserById(eachReply.getTargetId());
                         replyViewObject.put("targetUser", targetUser);
 
                         replysViewObjectList.add(replyViewObject);

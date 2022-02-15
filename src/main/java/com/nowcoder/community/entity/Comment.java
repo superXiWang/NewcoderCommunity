@@ -1,11 +1,13 @@
 package com.nowcoder.community.entity;
 
 import java.util.Date;
+import org.springframework.stereotype.Component;
 
 /**
  * @author xiwang
  * @create 2022-02-05-20:29
  */
+@Component
 public class Comment {
     private int id;
     private int userId;
