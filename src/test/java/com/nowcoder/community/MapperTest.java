@@ -2,9 +2,11 @@ package com.nowcoder.community;
 
 import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.dao.LoginTicketMapper;
+import com.nowcoder.community.dao.MessageMapper;
 import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.LoginTicket;
+import com.nowcoder.community.entity.Message;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityUtil;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +31,8 @@ public class MapperTest {
     private DiscussPostMapper discussPostMapper;
     @Autowired
     private LoginTicketMapper loginTicketMapper;
+    @Autowired
+    private MessageMapper messageMapper;
 
     @Test
     public void testSelect(){
@@ -84,4 +89,31 @@ public class MapperTest {
 //        System.out.println(loginTicket);
 //        loginTicketMapper.updateStatus("abc",1);
 //    }
+    @Test
+    public void testMessageMapper(){
+        List<Message> messages = messageMapper.selectConversationsListByUserId(111, 0, 20);
+        for(Message each:messages){
+            System.out.println(each);
+        }
+        System.out.println(messageMapper.selectConversationsCountByUserId(111));
+        List<Message> messages1 = messageMapper.selectMessagesListByConversationId("111_112", 0, 20);
+        for(Message each:messages1){
+            System.out.println(each);
+        }
+        System.out.println(messageMapper.selectMessagesCountByConversationId("111_112"));
+        System.out.println(messageMapper.selectUnreadMessagesCount(131,"111_131")); // suppose to be 2
+        // 插入
+        Message message =new Message();
+        message.setFromId(2);
+        message.setToId(3);
+        message.setContent("2-3(2)");
+        message.setConversationId("2_3");
+        message.setCreateTime(new Date());
+        messageMapper.insertMessage(message);
+        // 更新状态
+        List<Integer> ids = new ArrayList<>();
+        ids.add(355);
+        messageMapper.updateMessagesStatus(ids,2);
+
+    }
 }

@@ -48,6 +48,10 @@ public class UserService implements CommunityConstant {
         return userMapper.selectById(id);
     }
 
+    public User findUserByName(String username) { return userMapper.selectByName(username); }
+
+    public User findUserByEmail(String email) { return userMapper.selectByEmail(email); }
+
     public LoginTicket findLoginTicketByTicket(String ticket){
         return loginTicketMapper.selectByTicket(ticket);
     }
@@ -177,8 +181,12 @@ public class UserService implements CommunityConstant {
     /*
         更新用户的密码
      */
-    public void updatePassword(int userId, String newPassword){
+    public int updatePassword(int userId, String newPassword){
         User user = userMapper.selectById(userId);
-        userMapper.updatePassword(userId,newPassword);
+        return userMapper.updatePassword(userId,newPassword);
+    }
+
+    public int updateStatus(int userId, int status){
+        return userMapper.updateStatus(userId,status);
     }
 }
