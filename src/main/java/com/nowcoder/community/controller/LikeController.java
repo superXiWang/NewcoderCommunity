@@ -26,10 +26,10 @@ public class LikeController {
     // 1. 对帖子详情页面的点赞功能，提供异步请求，点赞后不刷新页面，只更新点赞数据和点赞状态。
     @RequestMapping(value = "/like",method= RequestMethod.POST)
     @ResponseBody
-    public String like(int entityType, int entityId){
+    public String like(int entityType, int entityId, int entityUserId){
         int userId = hostHolder.getValue().getId();
         // 点赞
-        likeService.like(userId,entityType,entityId);
+        likeService.like(userId,entityType,entityId,entityUserId);
         // 更新点赞数量与点赞状态
         long likeCount = likeService.getLikeCount(entityType, entityId);
         int likeStatus = likeService.getLikeStatus(userId, entityType, entityId);
