@@ -30,6 +30,11 @@ public class ServiceLogAspect {
     public void doBefore(JoinPoint joinPoint){
         // 记录日志，格式：[ip] 在[时间] 访问了[类.方法]
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        // 修改：适应EventConsumer机制的添加
+        if(attributes==null){
+            // 特殊调用，通过 Consumer调用了Service层方法，此处在日志中不记录
+            return;
+        }
         HttpServletRequest request = attributes.getRequest();
         String ip = request.getRemoteHost();
         String dateTime = String.format("yyyy-MM-dd:HH-mm-ss",new Date());

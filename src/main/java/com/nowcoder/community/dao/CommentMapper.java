@@ -12,8 +12,12 @@ import java.util.List;
  */
 @Mapper
 public interface CommentMapper {
-    // 根据评论的对象类型entityType与entityId查找评论
+    // 根据评论的对象类型entityType与entityId查找所有评论列表
     List<Comment> selectCommentsListByEntity(int entityType, int entityId, int offset, int limit);
+
+    // 根据评论的id查找评论
+    Comment selectCommentById(int id);
+
     // 查询总评论数
     int selectCommentsCountByEntity(int entityType, int entityId);
 

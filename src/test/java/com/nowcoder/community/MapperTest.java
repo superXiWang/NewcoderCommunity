@@ -115,5 +115,21 @@ public class MapperTest {
         ids.add(355);
         messageMapper.updateMessagesStatus(ids,2);
 
+        System.out.println("-----------------");
+        // 查某主题下的最新的系统通知
+        Message message1 = messageMapper.selectNewestTopicNotice(111, "comment");
+        System.out.println(message1.getContent());
+        // 查某主题下所有的系统通知数量
+        int like = messageMapper.selectTopicNoticesCount(111, "like");
+        System.out.println(like);
+        // 查某主题下未读的系统通知数量
+        int unReadLike = messageMapper.selectUnreadTopicNoticesCount(111, "like");
+        System.out.println(unReadLike);
+        // 查某主题下所有的系统通知
+        List<Message> messageList1 = messageMapper.selectTopicNoticesList(111, "like", 0, 3);
+        for(Message each:messageList1){
+            System.out.println(each.getContent());
+        }
     }
+
 }

@@ -26,10 +26,16 @@ public class CommentService implements CommunityConstant {
     @Autowired
     private SensitiveFilter sensitiveFilter;
 
-    // 根据评论的对象类型entityType与entityId查找评论
+    // 根据评论的对象类型entityType与entityId查找所有评论列表
     public List<Comment> getCommentsListByEntity(int entityType, int entityId, int offset, int limit){
         return commentMapper.selectCommentsListByEntity(entityType, entityId, offset, limit);
     }
+
+    // 根据评论的id查找对应评论
+    public Comment getCommentById(int id){
+        return commentMapper.selectCommentById(id);
+    }
+
     // 根据评论的对象类型entityType与entityId查询评论总数
     public int getCommentsCountByEntity(int entityType, int entityId){
         return commentMapper.selectCommentsCountByEntity(entityType,entityId);

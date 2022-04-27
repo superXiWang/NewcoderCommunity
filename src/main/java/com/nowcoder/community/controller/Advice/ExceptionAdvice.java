@@ -30,6 +30,10 @@ public class ExceptionAdvice {
         }
         // 对原请求进行区分
         String xRequestedWith = request.getHeader("x-requested-with");
+        // 修改：当采用EventConsumer机制时，xRequestedWith==null
+        if(xRequestedWith==null){
+            return;
+        }
         if(xRequestedWith.equals("XMLHttpRequest")){
             response.setContentType("application/plain;charset=utf-8");
             // 返回JSON格式字符串

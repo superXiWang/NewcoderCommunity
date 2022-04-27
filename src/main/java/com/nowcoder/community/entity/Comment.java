@@ -13,7 +13,7 @@ public class Comment {
     private int userId;
     private int entityType; // 标识评论针对的对象类型,1-帖子，2-评论
     private int entityId;  // 标识评论针对的对象id
-    private int targetId;   // 标识评论针对的用户id
+    private int targetId;   // 标识评论针对的用户id，当评论针对帖子时，targetId=0
     private String content;
     private int status;     // 是否有效，0为有效
     private Date createTime;

@@ -78,4 +78,47 @@
             #{id}
         </foreach>
     </update>
+
+    <select id="selectNewestTopicNotice" resultType="com.nowcoder.community.entity.Message">
+        select <include refid="selectFields"></include>
+        from message
+        where id in (
+            select max(id) from message
+            where status != 2
+            and from_Id=1
+            and to_Id=#{userId}
+            and conversation_id = #{topic}
+        )
+    </select>
+
+    <select id="selectTopicNoticesCount" resultType="Integer">
+        select count(id)
+        from message
+        where status != 2
+        and from_Id=1
+        and to_Id = #{userId}
+        and conversation_id = #{topic}
+    </select>
+
+    <select id="selectUnreadTopicNoticesCount" resultType="Integer">
+        select count(id)
+        from message
+        where status = 0
+        and from_Id=1
+        and to_Id = #{userId}
+        <if test="topic!=null">
+            and conversation_id = #{topic}
+        </if>
+    </select>
+
+    <select id="selectTopicNoticesList" resultType="com.nowcoder.community.entity.Message">
+        select <include refid="selectFields"></include>
+        from message
+        where conversation_id = #{topic}
+        and status != 2
+        and from_id = 1
+        and to_id=#{userId}
+        order by create_time desc
+        limit #{offset}, #{limit}
+    </select>
 </mapper>

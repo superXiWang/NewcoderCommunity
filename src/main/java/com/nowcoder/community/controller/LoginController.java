@@ -7,6 +7,8 @@ import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
+import com.nowcoder.community.util.RedisKeyUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,11 +56,24 @@ public class LoginController implements CommunityConstant {
     }
 
     @RequestMapping(value="/login",method = RequestMethod.POST)
-    public String getLoginPage(String username, String password, String verifyCode, boolean isRememberMe, Model model, HttpSession session, HttpServletResponse response){
-        if(!verifyCode.equalsIgnoreCase((String) session.getAttribute("text"))){
+    public String getLoginPage(String username, String password, String verifyCode, boolean isRememberMe, Model model,
+            /*HttpSession session,*/ HttpServletResponse response,@CookieValue("kaptchaKey") String kaptchaKey){
+        // 从session中获取验证码的真实值
+//        if(!verifyCode.equalsIgnoreCase((String) session.getAttribute("text"))){
+//            model.addAttribute("verifyCodeMsg","验证码错误！");
+//            return "/site/login";
+//        }
+        // 优化：从redis中取验证码的真实值，key从cookie中拿到
+        String kaptcha=null;
+        if(StringUtils.isNotBlank(kaptchaKey)){
+            kaptcha=userService.getKaptchaFromRedis(kaptchaKey);
+        }
+        if(StringUtils.isBlank(kaptcha) || StringUtils.isBlank(verifyCode) || !verifyCode.equalsIgnoreCase(kaptcha)){
             model.addAttribute("verifyCodeMsg","验证码错误！");
             return "/site/login";
         }
+
+        // 检查账号、密码
         int expiredSecond=isRememberMe?CommunityConstant.LONG_EXPIRED_SECOND:CommunityConstant.NORMAL_EXPIRED_SECOND;
         Map<String, Object> loginMsg = userService.login(username, password, expiredSecond);
         if(!loginMsg.containsKey("ticket")){
@@ -120,10 +135,19 @@ public class LoginController implements CommunityConstant {
     }
 
     @RequestMapping(value = "/kaptcha",method = RequestMethod.GET)
-    public void getKaptcha(HttpServletResponse response, HttpSession session){
+    public void getKaptcha(HttpServletResponse response /*, HttpSession session */){
         String text= defaultKaptcha.createText();
         BufferedImage image = defaultKaptcha.createImage(text);
-        session.setAttribute("text",text);
+
+        // 使用session存储验证码真实字符
+        // session.setAttribute("text",text);
+        // 优化：用redis存储验证码真实字符，将redis的key用cookie携带。可以解放session空间，并解决session一致性问题
+        String kaptchaKey=RedisKeyUtil.getKaptchaKey(CommunityUtil.generateUUID());
+        userService.storeKaptchaToRedis(kaptchaKey,text);
+        Cookie cookie=new Cookie("kaptchaKey",kaptchaKey);
+        cookie.setPath(contextPath);
+        cookie.setMaxAge(60);
+        response.addCookie(cookie);
 
         try {
             ServletOutputStream outputStream = response.getOutputStream();
