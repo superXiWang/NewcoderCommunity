@@ -13,27 +13,27 @@ public class RedisKeyUtil implements CommunityConstant {
 
     private static final String seperator = ":";
 
-    // redis中实体key的样式
-    // like:entity:entityTypeString:entityId
+    // redis中记录对实体点赞的用户列表
+    // key=like:entity:entityTypeString:entityId, val=集合类型，记录给该实体点赞的用户id
     public static String getRedisKey(int entityType,int entityId){
         String entityTypeString = entityType==ENTITY_TYPE_DISCUSSPOST ? "discussPost" : "comment";
         return prefixOfLike_Entity+seperator+entityTypeString+seperator+entityId;
     }
 
-    // redis中用户key的样式
-    // like:user:userId
+    // redis中记录该用户被点赞的总数
+    // key=like:user:userId, val=该用户被点赞的总数
     public static String getRedisKey(int userId){
         return prefixOfLike_User+seperator+userId;
     }
 
     // redis中用户登录时的验证码，key样式
-    // kaptcha:randomString
+    // kaptcha:randomString, val=验证码文本内容
     public static String getKaptchaKey(String randomString){
         return prefixOfKaptcha+seperator+randomString;
     }
 
     // redis中用户登录后，存储的登录凭证，key样式
-    // loginTicket:ticket
+    // loginTicket:ticket, val=LoginTicket对象
     public static String getLoginTicketKey(String ticket){
         return prefixOfLoginTicket+seperator+ticket;
     }

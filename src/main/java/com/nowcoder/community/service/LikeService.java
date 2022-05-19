@@ -33,6 +33,7 @@ public class LikeService {
 //            // 点赞
 //            redisTemplate.opsForSet().add(redisKey,userId);
 //        }
+        // 开启redis事务
         redisTemplate.execute(new SessionCallback() {
             @Override
             public Object execute(RedisOperations operations) throws DataAccessException {
