@@ -14,10 +14,10 @@ import java.util.Map;
 public class Event implements CommunityConstant {
     private int id;
     private String topic;   // 点赞、评论
-    private int userId;
-    private int entityType; // 点赞[帖子、评论（包括评论的评论）], 评论[帖子、评论]
+    private int userId;     // 触发事件的用户id
+    private int entityType; // 点赞[帖子、评论（包括评论的评论）], 评论[帖子、评论], 帖子
     private int entityId;
-    private int entityUserId;
+    private int entityUserId;   // 实体所属的用户id
     private Map<String,Object> data=new HashMap<>();
 
     // 改造setter方法，使其支持流式操作

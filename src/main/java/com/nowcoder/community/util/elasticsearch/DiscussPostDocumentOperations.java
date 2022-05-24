@@ -29,6 +29,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +56,12 @@ public class DiscussPostDocumentOperations implements DocumentOperations<Discuss
         map.put("content", discussPost.getContent());
         map.put("type", discussPost.getType());
         map.put("status", discussPost.getStatus());
-        map.put("createTime", discussPost.getCreateTime());
+        // 转换Date的输出样式
+        Date createTime = discussPost.getCreateTime();
+//        System.out.println(createTime);
+        String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").format(createTime);
+//        System.out.println(format);
+        map.put("createTime", format);
         map.put("commentCount", discussPost.getCommentCount());
         map.put("score", discussPost.getScore());
 
@@ -80,7 +87,8 @@ public class DiscussPostDocumentOperations implements DocumentOperations<Discuss
                                         .startObject("content").field("type", "text").field("analyzer", "ik_max_word").field("search_analyzer", "ik_smart").endObject()
                                         .startObject("type").field("type", "integer").endObject()
                                         .startObject("status").field("type", "integer").endObject()
-                                        .startObject("createTime").field("type", "date").endObject()
+                                        .startObject("createTime").field("type", "date").field("format","yyyy-MM-dd HH:mm:ss z||strict_date_optional_time||epoch_millis").endObject()
+//                                        .startObject("createTime").field("type", "date").endObject()
                                         .startObject("commentCount").field("type", "integer").endObject()
                                         .startObject("score").field("type", "double").endObject()
                                         .endObject()
@@ -116,7 +124,8 @@ public class DiscussPostDocumentOperations implements DocumentOperations<Discuss
                                         .startObject("content").field("type", "text").field("analyzer", "ik_max_word").field("search_analyzer", "ik_smart").endObject()
                                         .startObject("type").field("type", "integer").endObject()
                                         .startObject("status").field("type", "integer").endObject()
-                                        .startObject("createTime").field("type", "date").endObject()
+                                        .startObject("createTime").field("type", "date").field("format","yyyy-MM-dd HH:mm:ss z||strict_date_optional_time||epoch_millis").endObject()
+//                                        .startObject("createTime").field("type", "date").endObject()
                                         .startObject("commentCount").field("type", "integer").endObject()
                                         .startObject("score").field("type", "double").endObject()
                                         .endObject()

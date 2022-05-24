@@ -23,6 +23,7 @@ public interface CommunityConstant {
     // 消息队列：主题
     String TOPIC_LIKE="like";
     String TOPIC_COMMENT="comment";
+    String TOPIC_DISCUSSPOST_SAVE_TO_ES="discusspost_save_to_es";
 
     // 系统通知发送方 为1
     int MESSAGE_SYSTEM=1;

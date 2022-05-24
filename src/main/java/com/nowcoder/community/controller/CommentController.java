@@ -63,6 +63,13 @@ public class CommentController implements CommunityConstant {
         // 2. 生产者将事件加入队列
         eventProducer.handleEvent(event);
 
+        // 将 新增评论 封装为 Event，加入消息队列中，用于保存至Elasticsearch
+        event=new Event().setTopic(TOPIC_DISCUSSPOST_SAVE_TO_ES)
+                .setEntityType(ENTITY_TYPE_DISCUSSPOST)
+                .setEntityId(discussPostId);
+
+        eventProducer.handleEvent(event);
+
         return "redirect:/discuss/detail/"+discussPostId;
     }
 }

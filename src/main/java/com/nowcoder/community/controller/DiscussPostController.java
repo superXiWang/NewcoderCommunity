@@ -1,9 +1,7 @@
 package com.nowcoder.community.controller;
 
-import com.nowcoder.community.entity.Comment;
-import com.nowcoder.community.entity.DiscussPost;
-import com.nowcoder.community.entity.Page;
-import com.nowcoder.community.entity.User;
+import com.nowcoder.community.entity.*;
+import com.nowcoder.community.event.EventProducer;
 import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.service.DiscussPostService;
 import com.nowcoder.community.service.LikeService;
@@ -38,6 +36,8 @@ public class DiscussPostController implements CommunityConstant {
     private CommentService commentService;
     @Autowired
     private LikeService likeService;
+    @Autowired
+    private EventProducer eventProducer;
 
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     @ResponseBody
@@ -56,6 +56,14 @@ public class DiscussPostController implements CommunityConstant {
 //        discussPost.setCommentCount(1);
 //        discussPost.setScore(1.1);
         discussPostService.insertDiscussPost(discussPost);
+
+        // 将 新增帖子 封装为 Event，加入消息队列中
+        Event event=new Event().setTopic(TOPIC_DISCUSSPOST_SAVE_TO_ES)
+                .setEntityType(ENTITY_TYPE_DISCUSSPOST)
+                .setEntityId(discussPost.getId())
+                .setUserId(discussPost.getUserId());
+        eventProducer.handleEvent(event);
+
         return CommunityUtil.getJSONString(0,"发布成功！");
     }
 

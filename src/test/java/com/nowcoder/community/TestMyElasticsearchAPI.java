@@ -2,6 +2,7 @@ package com.nowcoder.community;
 
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.service.DiscussPostService;
+import com.nowcoder.community.service.EsDiscussPostService;
 import com.nowcoder.community.util.elasticsearch.DocumentOperations;
 import com.nowcoder.community.util.elasticsearch.IndicesOperations;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -64,6 +66,17 @@ public class TestMyElasticsearchAPI {
     private DocumentOperations discussPostDocumentOperations;
     @Autowired
     private DiscussPostService discussPostService;
+
+    @Autowired
+    private EsDiscussPostService esDiscussPostService;
+
+    @Test
+    public void testEsDiscussPostService(){
+        Page<DiscussPost> res= esDiscussPostService.searchDiscussPost("寒冬", 0, 2);
+        for(DiscussPost each:res){
+            System.out.println(each);
+        }
+    }
 
     @Test
     public void testDocumentInsert(){
@@ -103,9 +116,32 @@ public class TestMyElasticsearchAPI {
             System.out.println("Matched number of documents: " + response.getHits().getTotalHits());
             System.out.println("Maximum score: " + response.getHits().getMaxScore());
 
+//            for (SearchHit hit : response.getHits().getHits()) {
+//                System.out.println("-------------------------------------");
+//                System.out.println(hit.getSourceAsString());
+//                System.out.println("HighlightFields:");
+//                Map<String, HighlightField> highlightFields = hit.getHighlightFields();
+//                for(Map.Entry<String, HighlightField> entry:highlightFields.entrySet()){
+//                    System.out.println("key:"+entry.getKey());
+//                    System.out.println("value:"+entry.getValue());
+//                    Text[] fragments = entry.getValue().getFragments();
+//                    int i=0;
+//                    for (Text each:fragments){
+//                        i++;
+//                        System.out.println("Fragment "+i+": "+each.toString());
+//                    }
+//                }
+//                System.out.println("-------------------------------------");
+//            }
             for (SearchHit hit : response.getHits().getHits()) {
                 System.out.println("-------------------------------------");
-                System.out.println(hit.getSourceAsString());
+                Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+                for(Map.Entry<String, Object> entry:sourceAsMap.entrySet()){
+                    System.out.println("key:"+entry.getKey());
+                    System.out.println("value:"+entry.getValue());
+                }
+
+                System.out.println("*****");
                 System.out.println("HighlightFields:");
                 Map<String, HighlightField> highlightFields = hit.getHighlightFields();
                 for(Map.Entry<String, HighlightField> entry:highlightFields.entrySet()){

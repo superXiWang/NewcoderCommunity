@@ -16,24 +16,15 @@ import java.util.stream.Stream;
 @ContextConfiguration(classes = CommunityApplication.class)
 public class LeetCode {
     @Test
-    public void Test() {
-        int a=2<<2;
-        float f=11.1f;
-        double d=1E2;
-        byte bb=97;
-        int aa=100;
-        char c=97;
-        String s="1";
+    public void testSolution001(){
+        TreeNode root=new TreeNode(1);
+        root.left=new TreeNode(2);
+        root.right=new TreeNode(3);
 
-        System.out.println(a);
-        System.out.println(d);
-        System.out.println(f);
-        System.out.println("byte="+bb);
-        System.out.println("char="+c);
-        System.out.println("int="+a);
-        System.out.println("float="+f);
-        System.out.println("double="+d);
+        Solution001 solution001=new Solution001();
+        System.out.println(solution001.isUnivalTree(root));
     }
+
 
 }
 class MyThread implements Runnable{
@@ -51,4 +42,43 @@ class MyThread implements Runnable{
 
     }
 }
-
+class Solution001 {
+    long fore=0L;
+    long back=0L;
+    public boolean isUnivalTree(TreeNode root) {
+        // 使用2个long型变量，共128位，其中后100位中，第i+1位记录是否有i
+        // 遍历root，广度优先
+        if(root==null) return true;
+        Deque<TreeNode> queue=new LinkedList<TreeNode>();
+        queue.offer(root);
+        while(!queue.isEmpty()){
+            root=queue.poll();
+            // 判断
+            if(root.val<64 && ((back>>root.val) & 1)==1){
+                return false;
+            }else{
+                back=back | (1<<root.val);
+            }
+            if(root.val>=64 && (((fore>>(root.val-64)) & 1) ==1)){
+                return false;
+            }else{
+                fore=fore | (1<<(root.val-64));
+            }
+            if(root.left!=null) queue.offer(root.left);
+            if(root.right!=null) queue.offer(root.right);
+        }
+        return true;
+    }
+}
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode() {}
+    TreeNode(int val) { this.val = val; }
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
