@@ -11,6 +11,7 @@ public interface CommunityConstant {
     int ACTIVATION_SUCCESS=0;
     int ACTIVATION_REPEAT=1;
     int ACTIVATION_FAILURE=2;
+
     // 是否勾选“记住我”，登录凭证的失效时间
     int NORMAL_EXPIRED_SECOND=60*10;
     int LONG_EXPIRED_SECOND=60*60*24*7;
@@ -27,5 +28,10 @@ public interface CommunityConstant {
 
     // 系统通知发送方 为1
     int MESSAGE_SYSTEM=1;
+
+    // 权限
+    String AUTHORITY_USER="user";
+    String AUTHORITY_ADMIN="admin";
+    String AUTHORITY_MODERATOR="moderator";
 
 }

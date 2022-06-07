@@ -6,13 +6,21 @@ import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CookieUtil;
 import com.nowcoder.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.SecurityContextProvider;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -42,6 +50,10 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
                 // System.out.println("------------------------LoginTicketInterceptor: preHandler(): "+user.getUsername()+"------------------------");
                 // 用ThreadLocal工具类保存user
                 hostHolder.setValue(user);
+
+                // 登录凭证有效，则说明认证成功。为了使Spring Security的授权部分正常工作，要将对应权限添加到SecurityContext中
+                Authentication authentication=new UsernamePasswordAuthenticationToken(user,user.getPassword(),userService.getAuthorities(user.getId()));
+                SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
             }
         }
         return true;
@@ -60,5 +72,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         hostHolder.clear();
+        // 结束后，清除Spring SecurityContext中的Authentication
+        SecurityContextHolder.clearContext();
     }
 }

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,10 +23,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import javax.swing.plaf.synth.SynthOptionPaneUI;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -249,17 +247,37 @@ public class UserService implements CommunityConstant {
     * 2. 查询缓存得到User
     * 3. 缓存失效
     * */
-    public void storeUserToRedis(User user){
+    private void storeUserToRedis(User user){
         String userKey=RedisKeyUtil.getUserKey(user.getId());
         redisTemplate.opsForValue().set(userKey,user);
     }
-    public User getUserFromRedis(int userId){
+    private User getUserFromRedis(int userId){
         String userKey=RedisKeyUtil.getUserKey(userId);
         return (User) redisTemplate.opsForValue().get(userKey);
     }
-    public void clearUserCacheInRedis(int userId){
+    private void clearUserCacheInRedis(int userId){
         String userIdKey=RedisKeyUtil.getUserKey(userId);
         redisTemplate.delete(userIdKey);
     }
 
+    // 根据用户获取权限
+    public Collection<? extends GrantedAuthority> getAuthorities(int userId){
+        // 根据用户的 type 数据，获取对应权限
+        User user=findUserById(userId);
+        List<GrantedAuthority> list=new ArrayList<>();
+        list.add(new GrantedAuthority() {
+            @Override
+            public String getAuthority() {
+                switch (user.getType()){
+                    case 0: // 普通用户
+                        return AUTHORITY_USER;
+                    case 1: // 管理员
+                        return AUTHORITY_ADMIN;
+                    default:
+                        return AUTHORITY_MODERATOR;
+                }
+            }
+        });
+        return list;
+    }
 }
