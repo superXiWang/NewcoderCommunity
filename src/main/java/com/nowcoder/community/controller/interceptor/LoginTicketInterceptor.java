@@ -73,6 +73,6 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         hostHolder.clear();
         // 结束后，清除Spring SecurityContext中的Authentication
-        SecurityContextHolder.clearContext();
+//        SecurityContextHolder.clearContext();
     }
 }
