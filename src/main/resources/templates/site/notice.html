@@ -81,7 +81,7 @@
 				<!-- 通知列表 -->
 				<ul class="list-unstyled">
 					<!-- 评论 -->
-					<li class="media pb-3 pt-3 mb-3 border-bottom position-relative" th:if="${commentRecord.newestTopicMessage!=null}">
+					<li class="media pb-3 pt-3 mb-3 border-bottom position-relative" th:if="${commentRecord!=null}">
 						<span class="badge badge-danger" th:if="${commentRecord.unReadTopicNoticeCount!=0}" th:text="${commentRecord.unReadTopicNoticeCount}">4</span>
 						<img src="http://static.nowcoder.com/images/head/reply.png" class="mr-4 user-header" alt="通知图标">
 						<div class="media-body">
@@ -98,7 +98,7 @@
 						</div>
 					</li>
 					<!-- 赞 -->
-					<li class="media pb-3 pt-3 mb-3 border-bottom position-relative" th:if="${likeRecord.newestTopicMessage!=null}">
+					<li class="media pb-3 pt-3 mb-3 border-bottom position-relative" th:if="${likeRecord!=null}">
 						<span class="badge badge-danger" th:if="${likeRecord.unReadTopicNoticeCount!=0}" th:text="${likeRecord.unReadTopicNoticeCount}">4</span>
 						<img src="http://static.nowcoder.com/images/head/like.png" class="mr-4 user-header" alt="通知图标">
 						<div class="media-body">

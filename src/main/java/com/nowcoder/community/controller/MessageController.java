@@ -156,15 +156,10 @@ public class MessageController implements CommunityConstant {
         model.addAttribute("unReadNoticeCount",messageService.selectUnreadTopicNoticesCount(userId,null));
 
         // 记录 点赞 主题系统通知
-        Map<String,Object> tempRecord=new HashMap<>();
-            // 记录 点赞主题未读通知数量
-        tempRecord.put("unReadTopicNoticeCount",messageService.selectUnreadTopicNoticesCount(userId,TOPIC_LIKE));
-            // 记录 点赞主题通知总数量
-        tempRecord.put("topicNoticeCount",messageService.selectTopicNoticesCount(userId,TOPIC_LIKE));
-
-            // 记录 最新一条消息
+        // 记录 最新一条消息
         Message newestTopicNotice= messageService.selectNewestTopicNotice(userId,TOPIC_LIKE);
         if(newestTopicNotice!=null){
+            Map<String,Object> tempRecord=new HashMap<>();
             tempRecord.put("newestTopicMessage",newestTopicNotice);
             String content= HtmlUtils.htmlUnescape(newestTopicNotice.getContent());
             Map<String,Object> data = JSONObject.parseObject(content);
@@ -177,19 +172,22 @@ public class MessageController implements CommunityConstant {
             tempRecord.put("entityId",data.get("entityId"));
             // 动作针对的实体所属的帖子Id
             tempRecord.put("postId",data.get("postId"));
+
+            // 记录 点赞主题未读通知数量
+            tempRecord.put("unReadTopicNoticeCount",messageService.selectUnreadTopicNoticesCount(userId,TOPIC_LIKE));
+            // 记录 点赞主题通知总数量
+            tempRecord.put("topicNoticeCount",messageService.selectTopicNoticesCount(userId,TOPIC_LIKE));
+
+            model.addAttribute("likeRecord",tempRecord);
         }
-        model.addAttribute("likeRecord",tempRecord);
+
+
 
         // 记录 评论 主题系统通知
-        tempRecord=new HashMap<>();
-            // 记录 点赞主题未读通知数量
-        tempRecord.put("unReadTopicNoticeCount",messageService.selectUnreadTopicNoticesCount(userId,TOPIC_COMMENT));
-            // 记录 点赞主题通知总数量
-        tempRecord.put("topicNoticeCount",messageService.selectTopicNoticesCount(userId,TOPIC_COMMENT));
-
         // 记录 最新一条消息
         newestTopicNotice= messageService.selectNewestTopicNotice(userId,TOPIC_COMMENT);
         if(newestTopicNotice!=null){
+            Map<String,Object> tempRecord=new HashMap<>();
             tempRecord.put("newestTopicMessage",newestTopicNotice);
             String content= HtmlUtils.htmlUnescape(newestTopicNotice.getContent());
             Map<String,Object> data = JSONObject.parseObject(content);
@@ -202,8 +200,16 @@ public class MessageController implements CommunityConstant {
             tempRecord.put("entityId",data.get("entityId"));
             // 动作针对的实体所属的帖子Id
             tempRecord.put("postId",data.get("postId"));
+
+
+            // 记录 点赞主题未读通知数量
+            tempRecord.put("unReadTopicNoticeCount",messageService.selectUnreadTopicNoticesCount(userId,TOPIC_COMMENT));
+            // 记录 点赞主题通知总数量
+            tempRecord.put("topicNoticeCount",messageService.selectTopicNoticesCount(userId,TOPIC_COMMENT));
+
+            model.addAttribute("commentRecord",tempRecord);
         }
-        model.addAttribute("commentRecord",tempRecord);
+
 
         // 添加私信未读数量
         model.addAttribute("unReadMessagesCount",messageService.selectUnreadMessagesCount(userId, null));

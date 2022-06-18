@@ -42,18 +42,23 @@ public class SearchController implements CommunityConstant {
 
         // 搜索
         org.springframework.data.domain.Page<DiscussPost> searchResult = esDiscussPostService.searchDiscussPost(keyword, page.getCurrent() - 1, page.getLimit());
-        model.addAttribute("keyword",keyword);
-        // 将每个帖子的信息整理在Map中
-        List<Map<String,Object>> discussPosts=new ArrayList<>();
-        for(DiscussPost post:searchResult){
-            Map<String,Object> map=new HashMap<>();
-            map.put("post",post);
-            map.put("user",userService.findUserById(post.getUserId()));
-            map.put("likeCount",likeService.getLikeCount(ENTITY_TYPE_DISCUSSPOST,post.getId()));
+        List<Map<String,Object>> discussPosts=null;
+        if(searchResult!=null && searchResult.getTotalPages()!=0){
+            model.addAttribute("keyword",keyword);
+            // 将每个帖子的信息整理在Map中
+            discussPosts=new ArrayList<>();
+            for(DiscussPost post:searchResult){
+                Map<String,Object> map=new HashMap<>();
+                map.put("post",post);
+                map.put("user",userService.findUserById(post.getUserId()));
+                map.put("likeCount",likeService.getLikeCount(ENTITY_TYPE_DISCUSSPOST,post.getId()));
 
-            discussPosts.add(map);
+                discussPosts.add(map);
+            }
+
         }
         model.addAttribute("discussPosts",discussPosts);
+
         // 设置分页
         page.setPath("/search?keyword="+keyword);
         page.setRows(searchResult==null?0:searchResult.getSize());
